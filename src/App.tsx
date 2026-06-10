@@ -49,6 +49,52 @@ const M: Meta = {
     { title: '규칙 기반 수요 모델', body: '영역별 격차 임계값과 프로필 가중치를 조합해 정책 카드와 수요 강도를 결정 — 투명하고 설명 가능한 화이트박스 방식입니다.' },
     { title: '재현 가능한 진단', body: '응답·기준선·매핑 규칙이 모두 코드에 담겨 있어 동일 입력이면 동일 결과를 냅니다(결정론적).' },
   ],
+  targets: ['AI 역량 격차를 점검하려는 청년', '교육·정책 수요를 파악하려는 기관', '자기 AI 리터러시를 진단하려는 학생·직장인'],
+  goals: [
+    '5영역 자가진단으로 AI 리터러시를 측정한다',
+    '집단 기준선 대비 격차를 드러내 약점 영역을 식별한다',
+    '격차 기반 정책·교육 수요를 규칙 모델로 예측한다',
+  ],
+  scenarios: [
+    '나이대·전공계열·AI 경험으로 집단을 설정한다',
+    '15문항에 1~5점으로 답해 영역별 점수를 받는다',
+    '집단 대비 격차와 정책·교육 수요 예측을 확인한다',
+  ],
+  screens: [
+    { name: '집단 설정', desc: '나이대·전공계열·AI 경험 선택' },
+    { name: '자가진단', desc: '5영역 15문항 리커트 응답' },
+    { name: '진단 결과', desc: '종합 수준 게이지 + 영역별 점수·집단 기준선·격차' },
+    { name: '정책·교육 수요 예측', desc: '약점 영역 기반 정책 카드 + 수요 강도(상·중·하)' },
+    { name: 'AI 정책 코멘트', desc: '(선택) 우선순위·설계 제언 요약' },
+  ],
+  pipelineDetail: [
+    { step: '점수 환산', detail: '문항 응답을 영역별로 평균내어 0~100 점수로 환산한다.' },
+    { step: '기준선 조회', detail: '프로필(전공계열·경험)로 집단 기준선을 조회한다.' },
+    { step: '격차 계산', detail: '영역별 (기준선 − 점수)로 격차를 계산해 약점 영역을 식별한다.' },
+    { step: '수요 예측', detail: '격차·프로필을 규칙 모델에 매핑해 정책/교육과 수요 강도(상·중·하)를 추정한다.' },
+    { step: 'AI 코멘트(선택)', detail: '키가 있으면 결과를 요약해 우선순위·설계 제언을 생성한다.' },
+  ],
+  promptNotes: [
+    '격차·수요 예측은 규칙 모델이 결정적으로 수행하고, AI는 우선순위·설계 제언만 요약 보조한다.',
+    '진단 결과(프로필·종합 점수·영역별 격차)를 system 프롬프트에 넣어 정책 코멘트를 생성한다.',
+    'API 키가 없어도 5영역 진단·격차·수요 예측은 모두 동작한다.',
+  ],
+  architecture:
+    '백엔드 없는 React SPA. 공통 레이아웃·5탭은 src/ui.tsx, 진단 모델은 src/App.tsx가 담당한다. ' +
+    '격차·수요 예측은 App.tsx의 결정적 규칙 모델로 계산하고, 정책 코멘트는 src/lib/ai.ts(선택)로 보강하며, 응답은 브라우저 localStorage에 저장한다.',
+  structure: [
+    { path: 'src/App.tsx', desc: '5영역 진단·격차·정책 수요 예측 + 메타(M)' },
+    { path: 'src/ui.tsx', desc: '공통 레이아웃·5탭·UI 헬퍼' },
+    { path: 'src/lib/ai.ts', desc: 'OpenAI chat 헬퍼(선택 정책 코멘트)' },
+    { path: 'src/index.css', desc: '테마·게이지/막대 스타일' },
+  ],
+  dataModel: [
+    { name: 'Dim (5영역)', desc: '이해·활용·비판적사고·윤리안전·실무 차원' },
+    { name: 'Policy', desc: '영역별 정책 카드·수요 강도' },
+    { name: '저장', desc: 'localStorage "lit_profile"(집단)·"lit_answers"(응답)' },
+  ],
+  deploy:
+    'Vite 빌드(base: "./") 후 GitHub Actions(deploy.yml)가 main push 시 GitHub Pages로 자동 배포 → aebonlee.github.io/project17/',
   stack: ['React 18', 'TypeScript', 'Vite', '규칙기반 모델', 'OpenAI(선택)'],
   links: [{ label: 'OECD AI 역량 프레임워크', url: 'https://www.oecd.org/' }],
 };
