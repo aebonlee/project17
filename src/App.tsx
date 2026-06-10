@@ -95,6 +95,15 @@ const M: Meta = {
   ],
   deploy:
     'Vite 빌드(base: "./") 후 GitHub Actions(deploy.yml)가 main push 시 GitHub Pages로 자동 배포 → aebonlee.github.io/project17/',
+  scope: {
+    include: ['5영역 15문항 자가진단 → 영역 점수·집단 격차', '정책·교육 수요 예측·응답 저장', '규칙 모델 + AI 정책 코멘트(선택)'],
+    exclude: ['실제 정책 효과 검증', '대규모 표본 통계', '기관 대시보드'],
+  },
+  pitch: [
+    '"누가 어느 영역에서 얼마나" 부족한지 진단하는 도구',
+    '집단 대비 격차로 정책 우선순위를 가늠하는 점',
+    '규칙 모델은 결정론적·설명가능(화이트박스)',
+  ],
   stack: ['React 18', 'TypeScript', 'Vite', '규칙기반 모델', 'OpenAI(선택)'],
   links: [{ label: 'OECD AI 역량 프레임워크', url: 'https://www.oecd.org/' }],
 };
